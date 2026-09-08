@@ -6,106 +6,43 @@
 <title>Learning graph — living claims</title>
 <style>
   :root {
-    --bg: #f7f5f0;
-    --ink: #1a1a1a;
-    --muted: #5c5c5c;
-    --alive: #1b5e3b;
-    --weakened: #8a5a00;
-    --killed: #8b1e1e;
-    --rule: #d9d4c8;
-    --card: #fffef9;
+    --bg: #f7f5f0; --ink: #1a1a1a; --muted: #5c5c5c;
+    --alive: #1b5e3b; --weakened: #8a5a00; --killed: #8b1e1e;
+    --rule: #d9d4c8; --card: #fffef9;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-    font-size: 1.125rem;
-    line-height: 1.55;
-    color: var(--ink);
-    background: var(--bg);
+    font-size: 1.125rem; line-height: 1.55; color: var(--ink); background: var(--bg);
   }
-  main {
-    max-width: 42rem;
-    margin: 0 auto;
-    padding: 2.5rem 1.25rem 4rem;
-  }
-  header h1 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    margin: 0 0 0.35rem;
-  }
-  .sub {
-    color: var(--muted);
-    font-size: 0.95rem;
-    margin: 0 0 2rem;
-  }
+  main { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  header h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 0.35rem; }
+  .sub { color: var(--muted); font-size: 0.95rem; margin: 0 0 2rem; }
   h2 {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    border-top: 1px solid var(--rule);
-    padding-top: 1.5rem;
-    margin: 2.25rem 0 0.85rem;
-    font-weight: 600;
-    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+    border-top: 1px solid var(--rule); padding-top: 1.5rem; margin: 2.25rem 0 0.85rem;
+    font-weight: 600; font-family: ui-sans-serif, system-ui, sans-serif;
   }
-  .claim {
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: 1.25rem 1.35rem;
-  }
-  .claim-id {
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-  .status {
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+  .claim { background: var(--card); border: 1px solid var(--rule); border-radius: 6px; padding: 1.25rem 1.35rem; }
+  .claim-id { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .status { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
   .status.alive { color: var(--alive); }
   .status.weakened { color: var(--weakened); }
   .status.killed { color: var(--killed); text-decoration: line-through; }
   .claim p { margin: 0.6rem 0 0; }
-  .meta {
-    margin-top: 1rem;
-    font-size: 0.92rem;
-    color: var(--muted);
-  }
-  .meta dt {
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 0.65rem;
-  }
+  .meta { margin-top: 1rem; font-size: 0.92rem; color: var(--muted); }
+  .meta dt { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.65rem; }
   .meta dd { margin: 0.15rem 0 0; }
   .muted { color: var(--muted); font-style: italic; }
   pre.ledger-block {
-    white-space: pre-wrap;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: 1rem 1.1rem;
-    margin: 0 0 0.75rem;
+    white-space: pre-wrap; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.82rem; line-height: 1.45; background: var(--card); border: 1px solid var(--rule);
+    border-radius: 6px; padding: 1rem 1.1rem; margin: 0 0 0.75rem;
   }
   footer {
-    margin-top: 3rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--rule);
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-family: ui-sans-serif, system-ui, sans-serif;
+    margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule);
+    font-size: 0.85rem; color: var(--muted); font-family: ui-sans-serif, system-ui, sans-serif;
   }
 </style>
 </head>
@@ -115,10 +52,8 @@
     <h1>Learning graph</h1>
     <p class="sub">Living claims only. Confidence is the trial record — survived, weakened, or killed.</p>
   </header>
-
   <h2>Brief</h2>
   <p>**C0** (alive) — After the material has been encoded, practicing retrieval produces more durable retention than spending the same time restudying. The advantage grows as the delay to the real test grows. The claim does not hold when encoding never succeeded, when the practice test is a poor match to what must later be remembered, or when “testing” is high-stakes performance rather than practice.</p>
-
   <h2>Claim C0 · retrieval</h2>
   <article class="claim">
     <div class="claim-id">C0 · <span class="status alive">alive</span></div>
@@ -130,13 +65,26 @@
       <dt>Sources allowed</dt><dd>Roediger &amp; Karpicke 2006; Dunlosky et al. 2013; Bjork on desirable difficulties.</dd>
     </dl>
   </article>
-
   <h2>Ledger · C0</h2>
-  <p class="muted">No attacks logged yet.</p>
-
+  <pre class="ledger-block">2026-09-08
+Attack: When initial learning is equated, the retrieval–restudy retention gap does not grow as final-test delay grows.
+Target: claim-text
+Source: apprentice | Roediger &amp; Karpicke 2006 | path: /home/box/kunskapsbank/01-originaldokument/roediger-karpicke-2006-test-enhanced-learning
+Steelmans to: The delay-growth conjunct is false as a general rule; a larger late gap is not a reliable property of retrieval practice once encoding success is matched.
+Verdict: survived
+Why: Evidence (Roediger &amp; Karpicke 2006 abstract): after 5 min restudy beat testing; at 2 days and 1 week prior testing produced substantially greater retention than studying — the allowed seed itself supports delay-dependence of the advantage. The attack names no equated-encoding counter-result that removes delay-growth; inference that the conjunct is generally false is underdetermined against that seed. Claim field unchanged.
+Rewrite: none
+</pre>
+<pre class="ledger-block">2026-09-08
+Attack: Outside lab word-list and short prose-passage paradigms, equal-time restudy yields delayed criterion retention at least as high as retrieval practice when encoding succeeded and practice matches the test.
+Target: bound
+Source: apprentice
+Steelmans to: C0’s main contrast is paradigm-bound; without an explicit transfer limit the claim overreaches educationally complex materials.
+Verdict: survived
+Why: Scope inference only — no identifiable counter-study applied in this turn showing equal or superior delayed restudy outside word-list/prose paradigms under encoding-succeeded and criterion-matched conditions. Kill-condition not met; Bounds left empty rather than inventing a transfer limit. Claim field unchanged.
+Rewrite: none</pre>
   <h2>Open questions</h2>
   <p class="muted">None open.</p>
-
   <footer>
     Compiled 2026-09-08 from <code>/learning-graph</code>. Not a catalogue.
   </footer>
