@@ -54,7 +54,7 @@
   </header>
   <h2>Brief</h2>
   <p><strong>C0</strong> (weakened) — After the material has been encoded, practicing retrieval produces more durable retention than spending the same time restudying when the criterion test is delayed, items are correctly retrieved repeatedly in practice with corrective feedback (a single correct retrieval is not enough), and no-feedback multiple-choice practice is excluded. At an immediate (~5 min) test, equal-time restudy can be superior. Once initial learning is equated, the claim does not assert that this advantage grows as final-test delay grows. The claim does not hold when encoding never succeeded, when the practice test is a poor match to what must later be remembered, when practice accuracy is relatively low and no feedback is given, or when “testing” is high-stakes performance rather than practice.</p>
-<p><strong>C1</strong> (alive) — Encoding has succeeded when the learner can later retrieve the target under conditions that match the practice criterion without new presentation of the material — the content is available in memory, not merely exposed.</p>
+<p><strong>C1</strong> (weakened) — Encoding has succeeded when the learner can later access the target under cue conditions that match the practice criterion without new presentation of the material — accessibility under that cue set, not mere study exposure or storage-without-access.</p>
 <p>Edge: C0 depends-on C1.</p>
   <h2>Claim C0 · retrieval</h2>
   <article class="claim">
@@ -151,18 +151,33 @@ Why: Clerk Apply block 1 (cycle 5/5). Dunlosky et al. 2013 synthesize dosage evi
 Rewrite: claim-field+brief</pre>
   <h2>Claim C1 · encoding</h2>
   <article class="claim">
-    <div class="claim-id">C1 · <span class="status alive">alive</span></div>
-    <p>Encoding has succeeded when the learner can later retrieve the target under conditions that match the practice criterion without new presentation of the material — the content is available in memory, not merely exposed.</p>
+    <div class="claim-id">C1 · <span class="status weakened">weakened</span></div>
+    <p>Encoding has succeeded when the learner can later access the target under cue conditions that match the practice criterion without new presentation of the material — accessibility under that cue set, not mere study exposure or storage-without-access.</p>
     <dl class="meta">
       <dt>Last change</dt><dd>2026-09-14</dd>
       <dt>Depends on</dt><dd>C0 depends-on C1 (retrieval-vs-restudy only applies after encoding succeeded).</dd>
-      <dt>Bounds</dt><dd>—</dd>
+      <dt>Bounds</dt><dd>Canonical retrieval-practice designs that motivate C0 (e.g. Roediger &amp; Karpicke 2006 Exp. 1) typically gate the restudy/test contrast on study exposure rather than item-level verified retrieval; C1 asserts a stricter accessibility criterion than those designs verify. Success here is accessibility under the practice/criterion cue set (Tulving &amp; Pearlstone), not storage availability alone and not “was on the page.”</dd>
       <dt>What would kill this</dt><dd>Showing that “encoded” in retrieval-practice studies means only “was studied / was on the page,” with no stricter availability or retrieval test — or that C0’s retrieval-over-restudy effect appears equally when that stricter test fails.</dd>
       <dt>Tutor consequence</dt><dd>none yet</dd>
     </dl>
   </article>
   <h2>Ledger · C1</h2>
-  <p class="muted">No attacks logged yet.</p>
+  <pre class="ledger-block">2026-09-14
+Attack: In Roediger &amp; Karpicke 2006 Experiment 1, the restudy-versus-test contrast after one study episode admits all idea units without an item-level availability or retrieval gate, so “encoded” is operationalized as “was studied / was on the page.”
+Target: kill-condition
+Source: Roediger &amp; Karpicke 2006
+Steelmans to: Kill-condition prong 1 is met for the canonical seed design that motivates C0; C1 cannot stand as if those studies already verified criterion-matched retrieval before the contrast.
+Verdict: weakened
+Why: Named design fact — Exp. 1 assigns restudy vs test after one study period with no item-level retrieval gate; initial free recall when given is ~70%. Claim and Bounds rewritten same turn so C1 remains the graph’s stricter accessibility precondition, with an explicit Bound that seed designs often use study-exposure. Brief rewritten. Kill withheld: C1 is still tenable as the precondition C0 needs, once the operational gap is Bounded.
+Rewrite: claim-field+brief</pre>
+<pre class="ledger-block">2026-09-14
+Attack: Tulving &amp; Pearlstone 1966 show many studied items remain available in storage yet inaccessible without cues, so “can later retrieve under criterion-matched conditions” is accessibility, not the same as “available in memory.”
+Target: claim-text
+Source: Tulving &amp; Pearlstone 1966
+Steelmans to: The living sentence conflates storage availability with cue-dependent accessibility; C1 must define success as accessibility under the practice/criterion cue set.
+Verdict: weakened
+Why: Named result — cued recall recovers items missed under free recall. Claim rewritten same turn from “available in memory” to accessibility under the practice/criterion cue set; Bounds note availability≠accessibility. Brief rewritten.
+Rewrite: claim-field+brief</pre>
   <h2>Open questions</h2>
   <ol>
 <li>Does C0’s “delayed” main contrast hold between ~5 min and ~2 days, or must Bounds name a multi-day minimum as in Roediger &amp; Karpicke 2006?</li>
