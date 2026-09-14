@@ -12,65 +12,70 @@ def esc(s: str) -> str:
     return html.escape(s)
 
 def md_inline(s: str) -> str:
-    """Escape, then turn **bold** into <strong>."""
     s = esc(s)
     return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
 
 def public_source(line: str) -> str:
-    # author-year only; drop local disk paths if any slipped through
     line = re.sub(r"\s*\|\s*path:\s*/home/box/[^\n]*", "", line)
     line = re.sub(r"/home/box/[^\s|]+", "", line)
     return line
 
-brief = (ROOT / "brief.md").read_text()
-oq = (ROOT / "open-questions.md").read_text()
-claim = (ROOT / "claims/C0-retrieval.md").read_text()
-ledger = (ROOT / "ledgers/C0-retrieval.md").read_text()
-
-fields = {}
-for line in claim.splitlines():
-    if line.startswith("Claim:"):
-        fields["Claim"] = line[len("Claim:"):].strip()
-    elif ":" in line:
-        k, _, v = line.partition(":")
-        if k.strip() == "C0" or (k.startswith("C") and len(k) > 1 and k[1:].isdigit()):
+def parse_claim(text: str) -> dict:
+    fields = {}
+    cid = None
+    for line in text.splitlines():
+        if re.fullmatch(r"C\d+", line.strip()):
+            cid = line.strip()
+            fields["id"] = cid
             continue
-        fields[k.strip()] = v.strip()
+        if line.startswith("Claim:"):
+            fields["Claim"] = line[len("Claim:"):].strip()
+        elif ":" in line:
+            k, _, v = line.partition(":")
+            k = k.strip()
+            if re.fullmatch(r"C\d+", k):
+                continue
+            fields[k] = v.strip()
+    return fields
 
-status = fields.get("Status", "alive")
-claim_text = fields.get("Claim", "")
-slug = fields.get("Slug", "retrieval")
-last = fields.get("Last change", "")
-kill = fields.get("What would kill this", "")
-tutor = fields.get("Tutor consequence", "none yet")
-bounds = fields.get("Bounds", "")
-
-# ledger blocks
-ledger_blocks = []
-lines = ledger.strip().splitlines()
-rest = "\n".join(lines[1:]).strip() if lines and lines[0].startswith("Ledger") else ledger.strip()
-if rest:
-    cur = []
+def parse_ledger(ledger: str) -> list[str]:
+    lines = ledger.strip().splitlines()
+    rest = "\n".join(lines[1:]).strip() if lines and lines[0].startswith("Ledger") else ledger.strip()
+    if not rest:
+        return []
+    blocks, cur = [], []
     for ln in rest.splitlines():
         if len(ln) >= 10 and ln[:4].isdigit() and ln[4] == "-" and ln[7] == "-" and (len(ln) == 10 or ln[10:11] in ("", " ")):
             if cur:
-                ledger_blocks.append("\n".join(cur))
+                blocks.append("\n".join(cur))
             cur = [ln]
         else:
             cur.append(ln)
     if cur:
-        ledger_blocks.append("\n".join(cur))
+        blocks.append("\n".join(cur))
+    clean = []
+    for b in blocks:
+        cleaned = []
+        for ln in b.splitlines():
+            cleaned.append(public_source(ln) if ln.startswith("Source:") else ln)
+        clean.append("\n".join(cleaned))
+    return clean
 
-# sanitize sources in ledger display
-clean_blocks = []
-for b in ledger_blocks:
-    cleaned = []
-    for ln in b.splitlines():
-        if ln.startswith("Source:"):
-            cleaned.append(public_source(ln))
-        else:
-            cleaned.append(ln)
-    clean_blocks.append("\n".join(cleaned))
+brief = (ROOT / "brief.md").read_text()
+oq = (ROOT / "open-questions.md").read_text()
+
+claim_files = sorted((ROOT / "claims").glob("C*-*.md"), key=lambda p: int(re.match(r"C(\d+)", p.name).group(1)))
+claims = []
+for cf in claim_files:
+    fields = parse_claim(cf.read_text())
+    cid = fields.get("id") or cf.name.split("-")[0]
+    ledger_path = ROOT / "ledgers" / f"{cid}-{fields.get('Slug', 'x')}.md"
+    if not ledger_path.exists():
+        # try any ledger starting with cid-
+        matches = list((ROOT / "ledgers").glob(f"{cid}-*.md"))
+        ledger_path = matches[0] if matches else None
+    blocks = parse_ledger(ledger_path.read_text()) if ledger_path and ledger_path.exists() else []
+    claims.append((cid, fields, blocks))
 
 brief_lines = [ln.strip() for ln in brief.splitlines() if ln.strip() and not ln.startswith("#")]
 oq_items = []
@@ -87,12 +92,6 @@ for ln in oq.splitlines():
     else:
         oq_items.append(s)
 
-status_class = {"alive": "alive", "weakened": "weakened", "killed": "killed"}.get(status, "alive")
-ledger_html = (
-    '<p class="muted">No attacks logged yet.</p>'
-    if not clean_blocks
-    else "\n".join(f'<pre class="ledger-block">{esc(b)}</pre>' for b in clean_blocks)
-)
 oq_html = (
     '<p class="muted">None open.</p>'
     if not oq_items
@@ -103,6 +102,39 @@ brief_html = (
     if brief_lines
     else "<p>No living claims.</p>"
 )
+
+sections = []
+for cid, fields, blocks in claims:
+    status = fields.get("Status", "alive")
+    status_class = {"alive": "alive", "weakened": "weakened", "killed": "killed"}.get(status, "alive")
+    slug = fields.get("Slug", "")
+    claim_text = fields.get("Claim", "")
+    last = fields.get("Last change", "")
+    depends = fields.get("Depends on", "")
+    bounds = fields.get("Bounds", "")
+    kill = fields.get("What would kill this", "")
+    tutor = fields.get("Tutor consequence", "none yet")
+    ledger_html = (
+        '<p class="muted">No attacks logged yet.</p>'
+        if not blocks
+        else "\n".join(f'<pre class="ledger-block">{esc(b)}</pre>' for b in blocks)
+    )
+    sections.append(f'''  <h2>Claim {esc(cid)} · {esc(slug)}</h2>
+  <article class="claim">
+    <div class="claim-id">{esc(cid)} · <span class="status {status_class}">{esc(status)}</span></div>
+    <p>{esc(claim_text)}</p>
+    <dl class="meta">
+      <dt>Last change</dt><dd>{esc(last)}</dd>
+      <dt>Depends on</dt><dd>{esc(depends) if depends else "—"}</dd>
+      <dt>Bounds</dt><dd>{esc(bounds) if bounds else "—"}</dd>
+      <dt>What would kill this</dt><dd>{esc(kill)}</dd>
+      <dt>Tutor consequence</dt><dd>{esc(tutor)}</dd>
+    </dl>
+  </article>
+  <h2>Ledger · {esc(cid)}</h2>
+  {ledger_html}''')
+
+claims_html = "\n".join(sections)
 
 page = f'''<!DOCTYPE html>
 <html lang="en">
@@ -160,19 +192,7 @@ page = f'''<!DOCTYPE html>
   </header>
   <h2>Brief</h2>
   {brief_html}
-  <h2>Claim C0 · {esc(slug)}</h2>
-  <article class="claim">
-    <div class="claim-id">C0 · <span class="status {status_class}">{esc(status)}</span></div>
-    <p>{esc(claim_text)}</p>
-    <dl class="meta">
-      <dt>Last change</dt><dd>{esc(last)}</dd>
-      <dt>Bounds</dt><dd>{esc(bounds) if bounds else "—"}</dd>
-      <dt>What would kill this</dt><dd>{esc(kill)}</dd>
-      <dt>Tutor consequence</dt><dd>{esc(tutor)}</dd>
-    </dl>
-  </article>
-  <h2>Ledger · C0</h2>
-  {ledger_html}
+{claims_html}
   <h2>Open questions</h2>
   {oq_html}
   <footer>
@@ -184,4 +204,4 @@ page = f'''<!DOCTYPE html>
 '''
 OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(page)
-print(f"wrote {OUT} ({OUT.stat().st_size} bytes, {len(clean_blocks)} ledger blocks)")
+print(f"wrote {OUT} ({OUT.stat().st_size} bytes, {len(claims)} claims)")
